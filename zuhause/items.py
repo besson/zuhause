@@ -24,3 +24,5 @@ class Home(scrapy.Item):
     dimensions = Field()
     site = Field()
     updated_at = Field()
+    address = Field()
+    geolocation = Field()

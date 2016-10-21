@@ -6,6 +6,9 @@ from scrapy.http import Request
 from zuhause.items import Home
 from scrapy.spiders import CrawlSpider
 from datetime import date
+from zuhause.utils.date_parser import parse_date
+from zuhause.utils.geo import coord
+import re
 
 class ComingHomeSpider(CrawlSpider):
     name = "coming_home"
@@ -37,12 +40,23 @@ class ComingHomeSpider(CrawlSpider):
         home["title"] = sel.xpath("//h2//text()").extract()[0]
         home["site_id"] = str(sel.xpath("//table//tr//th//text()").extract()[0]).strip().split("Offer no. ")[1]
         home["dimensions"] = sel.xpath("//table//tr//td//text()").extract()[0]
-        home["available_at"] = str(sel.xpath("//table//tr//td//text()").extract()[1])
+        home["available_at"] = parse_date(str(sel.xpath("//table//tr//td//text()").extract()[1]))
         home["min_time_to_stay"] = str(sel.xpath("//table//tr//td//text()").extract()[2]).split("min. ")[1]
         home["rent_price"] = float(sel.xpath("//table//tr//td//text()").extract()[3].encode("utf-8").split(",00\xc2")[0].replace(".", ""))
         home["deposit"] = sel.xpath("//table//tr//td//text()").extract()[5]
         home["location"] = sel.xpath("//table//tr//td//text()").extract()[8].strip()
         home["description"] = sel.xpath("//table//tr//td//text()").extract()[11]
         home["updated_at"] = date.today().isoformat()
+        home["address"] = self.address(response.body)
+        home["geolocation"] = coord(home["address"])
 
         return home
+
+    def address(self, body):
+        match = re.search( r'geocoder\.getLatLng\(\s*\'(.*)\',\n\t\t', body)
+
+        if (match):
+            return str(match.group(1))
+        else:
+            return ""
+
