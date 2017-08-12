@@ -11,7 +11,7 @@ from zuhause.utils.geo import coord
 import re
 
 class ComingHomeSpider(CrawlSpider):
-    name = "coming_home"
+    name = "coming-home"
     start_urls = ["http://en.coming-home.org/suche_3.php"]
 
     def parse(self, response):
@@ -59,4 +59,3 @@ class ComingHomeSpider(CrawlSpider):
             return str(match.group(1))
         else:
             return ""
-
