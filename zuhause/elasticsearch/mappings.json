@@ -1,0 +1,95 @@
+{
+   "settings": {
+      "analysis": {
+         "analyzer": {
+            "en_enhanced": {
+               "type": "custom",
+               "char_filter": [
+                  "html_strip"
+               ],
+               "tokenizer": "standard",
+               "filter": [
+                  "lowercase",
+                  "asciifolding",
+                  "stop",
+                  "en_stemmer"
+               ]
+            },
+            "ge_enhanced": {
+               "type": "custom",
+               "char_filter": [
+                  "html_strip"
+               ],
+               "tokenizer": "standard",
+               "filter": [
+                  "lowercase",
+                  "asciifolding",
+                  "ge_stop",
+                  "de_stemmer"
+               ]
+            }
+         },
+         "filter": {
+            "en_stemmer": {
+               "type": "stemmer",
+               "name": "english"
+            },
+            "de_stemmer": {
+               "type": "stemmer",
+               "name": "light_german"
+            },
+            "ge_stop": {
+               "type": "stop",
+               "stopwords": "_german"
+            }
+         }
+      }
+   },
+   "mappings": {
+      "offer": {
+         "properties": {
+            "geolocation": {
+               "type": "geo_point"
+            },
+            "location": {
+               "type": "string",
+               "analyzer": "ge_enhanced"
+            },
+            "description": {
+               "type": "text",
+               "fields": {
+                  "english": {
+                     "type": "text",
+                     "analyzer": "english"
+                  },
+                  "keyword": {
+                     "type": "string",
+                     "analyzer": "keyword"
+                  },
+                  "german": {
+                     "type": "text",
+                     "analyzer": "german"
+                  }
+               }
+            },
+            "title": {
+               "type": "text",
+               "fields": {
+                  "english": {
+                     "type": "text",
+                     "analyzer": "english"
+                  },
+                  "keyword": {
+                     "type": "string",
+                     "analyzer": "keyword"
+                  },
+                  "german": {
+                     "type": "text",
+                     "analyzer": "german"
+                  }
+               }
+            }
+         }
+      }
+   }
+}

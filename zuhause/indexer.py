@@ -3,6 +3,7 @@ from bson.json_util import dumps
 import sys; sys.path.append('../')
 import zuhause_config as cfg
 import pymongo
+import json
 
 class Indexer:
 
@@ -15,7 +16,7 @@ class Indexer:
         import elasticsearch.helpers
 
         self.__es.indices.delete(self.__index, ignore=[400, 404])
-        self.__es.indices.create(self.__index)
+        self.__es.indices.create(self.__index, body=json.load(open('elasticsearch/mappings.json')))
 
         last_updated = self.__db.find().sort('updated_at',
                                 pymongo.DESCENDING).limit(1)[0]['updated_at']
