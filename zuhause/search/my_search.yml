@@ -1,0 +1,8 @@
+q: Modern Building
+pets_allowed: yes
+max_price: 900
+available_at: 2017-11-01
+base_location:
+  lat: 52.5219184
+  long: 13.411026
+  radius: 3km
