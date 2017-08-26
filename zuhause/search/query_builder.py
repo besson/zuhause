@@ -14,6 +14,7 @@ class QueryBuilder:
         self._add_max_price_filter(filter_match)
         self._add_available_from_filter(filter_match)
         self._add_geo_location_filter(filter_match)
+        self._add_room_booster(should_match)
 
         return es_query
 
@@ -39,6 +40,18 @@ class QueryBuilder:
                                     'geolocation' : {
                                         'lat' : self._params['base_location']['lat'],
                                         'lon' : self._params['base_location']['long']}}})
+
+    def _add_room_booster(self, should_match):
+        if ('rooms' in self._params):
+            should_match.append({ 'multi_match':
+                                    {'query': '%d room' % self._params['rooms'],
+                                     'type': 'phrase_prefix',
+                                     'fields': [
+                                        'description.english',
+                                        'dimensions.english'
+                                      ]
+                                    }
+                                })
 
     def _query_template(self):
         return {

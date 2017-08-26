@@ -6,3 +6,4 @@ base_location:
   lat: 52.5219184
   long: 13.411026
   radius: 3km
+rooms: 2

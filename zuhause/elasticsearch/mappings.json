@@ -88,6 +88,23 @@
                      "analyzer": "german"
                   }
                }
+            },
+            "dimensions": {
+               "type": "text",
+               "fields": {
+                  "english": {
+                     "type": "text",
+                     "analyzer": "english"
+                  },
+                  "keyword": {
+                     "type": "string",
+                     "analyzer": "keyword"
+                  },
+                  "german": {
+                     "type": "text",
+                     "analyzer": "german"
+                  }
+               }
             }
          }
       }

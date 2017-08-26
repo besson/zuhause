@@ -41,7 +41,7 @@ class QueryBuilderTest(TestCase):
         params = {'max_price': 1200}
         self.assertTrue(str({'range': {'rent_price': {'lte': 1200}}}) in str(QueryBuilder(params).build()))
 
-    def test_should_available_from_filter(self):
+    def test_should_filter_available_from(self):
         params = {'available_from': '2017-01-01'}
         self.assertTrue(str({'range': {'available_at': {'gte': '2017-01-01'}}}) in str(QueryBuilder(params).build()))
 
@@ -50,3 +50,17 @@ class QueryBuilderTest(TestCase):
 
         expected = "'geo_distance': {'distance': '42km', 'geolocation': {'lat': 52.5219184, 'lon': 13.411026}}"
         self.assertTrue(expected in str(QueryBuilder(params).build()))
+
+    def test_should_boost_by_rooms(self):
+        params = {'rooms': 2}
+        query = str({ 'multi_match':
+                        {'query': '%d room' % params['rooms'],
+                         'type': 'phrase_prefix',
+                         'fields': [
+                            'description.english',
+                            'dimensions.english'
+                          ]
+                        }
+                    })
+
+        self.assertTrue(query in str(QueryBuilder(params).build()))
