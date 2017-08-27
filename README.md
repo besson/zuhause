@@ -29,7 +29,7 @@ $ scrapy crawl <spider name>
 
 1. Set up your search parameters (filters) in a .yml file, like this example:
 
-![filters](http://thecodeknight.herokuapp.com/img/search_filter.png)
+![filters](http://thecodeknight.herokuapp.com/img/search_filter_1.png)
 
 2. Run search across your filters:
 ```
