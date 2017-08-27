@@ -26,3 +26,10 @@ $ scrapy crawl <spider name>
 * coming-home
 
 ## Searching
+
+1. Set up your search parameters (filters) in a .yml file, like this example:
+
+2. Run search across your filters:
+```
+$ python search.py search/my_search.yml
+```
