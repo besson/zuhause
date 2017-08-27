@@ -12,7 +12,7 @@ class QueryBuilder:
         self._add_query_terms(should_match)
         self._add_pet_filter(must_not_match)
         self._add_max_price_filter(filter_match)
-        self._add_available_from_filter(filter_match)
+        self._add_available_at_filter(filter_match)
         self._add_geo_location_filter(filter_match)
         self._add_room_booster(should_match)
 
@@ -28,11 +28,11 @@ class QueryBuilder:
 
     def _add_max_price_filter(self, filter_match):
         if ('max_price' in self._params):
-            filter_match.append({'range': {'rent_price': {'lte': self._params['max_price']}}})
+            filter_match.append({'range': {'rent_price': {'to': self._params['max_price']}}})
 
-    def _add_available_from_filter(self, filter_match):
-        if ('available_from' in self._params):
-            filter_match.append({'range': {'available_at': {'gte': self._params['available_from']}}})
+    def _add_available_at_filter(self, filter_match):
+        if ('available_at' in self._params):
+            filter_match.append({'range': {'available_at': {'to': self._params['available_at']}}})
 
     def _add_geo_location_filter(self, filter_match):
         if ('base_location' in self._params):

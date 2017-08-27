@@ -39,11 +39,11 @@ class QueryBuilderTest(TestCase):
 
     def test_should_add_price_filter(self):
         params = {'max_price': 1200}
-        self.assertTrue(str({'range': {'rent_price': {'lte': 1200}}}) in str(QueryBuilder(params).build()))
+        self.assertTrue(str({'range': {'rent_price': {'to': 1200}}}) in str(QueryBuilder(params).build()))
 
-    def test_should_filter_available_from(self):
-        params = {'available_from': '2017-01-01'}
-        self.assertTrue(str({'range': {'available_at': {'gte': '2017-01-01'}}}) in str(QueryBuilder(params).build()))
+    def test_should_filter_available_at(self):
+        params = {'available_at': '2017-01-01'}
+        self.assertTrue(str({'range': {'available_at': {'to': '2017-01-01'}}}) in str(QueryBuilder(params).build()))
 
     def test_should_filter_by_radius(self):
         params = {'base_location': {'lat': 52.5219184, 'long': 13.411026, 'radius': '42km'}}
