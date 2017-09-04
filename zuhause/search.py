@@ -26,6 +26,7 @@ class Search:
         print("price: %s" % hit['rent_price'])
         print("address: %s" % hit['address'])
         print("available_at: %s" % hit['available_at'])
+        print("dimensions: %s" % hit['dimensions'])
         print("url: %s" % hit['url'])
 
 if __name__ == '__main__':
