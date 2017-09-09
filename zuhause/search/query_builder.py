@@ -7,10 +7,11 @@ class QueryBuilder:
         es_query = self._query_template()
         should_match = es_query['query']['bool']['should']
         must_not_match = es_query['query']['bool']['must_not']
+        must_match = es_query['query']['bool']['must']
         filter_match = es_query['query']['bool']['filter']
 
         self._add_query_terms(should_match)
-        self._add_pet_filter(must_not_match)
+        self._add_pet_filter(must_not_match, must_match)
         self._add_max_price_filter(filter_match)
         self._add_available_at_filter(filter_match)
         self._add_geo_location_filter(filter_match)
@@ -22,9 +23,12 @@ class QueryBuilder:
         if ('q' in self._params):
             should_match.append({'match': {'all': self._params['q']}})
 
-    def _add_pet_filter(self, must_not_match):
+    def _add_pet_filter(self, must_not_match, must_match):
         if ('pets_allowed' in self._params and self._params['pets_allowed'] == 'yes'):
             must_not_match.append({'match_phrase': {'description.english': 'pet not allowed'}})
+            must_match.append({'match': {'allows_pets': 'yes'}})
+        elif('pets_allowed' in self._params and self._params['pets_allowed'] == 'no'):    
+            must_match.append({'match': {'allows_pets': 'no'}})
 
     def _add_max_price_filter(self, filter_match):
         if ('max_price' in self._params):
@@ -62,6 +66,7 @@ class QueryBuilder:
                            }
                         ],
                         'must_not': [],
+                        'must': [],
                         'filter': []
                       }
                     }, 'size': 1000

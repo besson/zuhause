@@ -25,6 +25,7 @@ class Indexer:
 
             for result in self.__db.find({'updated_at': last_updated}):
                 result['id'] = str(result.pop('_id'))
+                result['rent_price'] = float(result['rent_price'])
 
                 offer = {'_index': self.__index,
                          '_type': 'offer',

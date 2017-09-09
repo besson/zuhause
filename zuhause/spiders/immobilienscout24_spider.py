@@ -73,7 +73,7 @@ class Immobilienscout24Spider(CrawlSpider):
         return str(element.extract()[0].encode("utf-8")).strip()
 
     def format_price(self, element):
-        return self.to_str(element).split()[0].replace(",", "").replace(".", "")
+        return float(self.to_str(element).split()[0].replace(",", "").replace(".", ""))
 
     def format_allows_pets(self, content):
         if('Nein' in content):

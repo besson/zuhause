@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from utils.mongo_connector import get_db
 from bson.json_util import dumps
 from search.query_builder import QueryBuilder
@@ -22,12 +23,14 @@ class Search:
 
     def print_hit(self, hit):
         print("-------------------------------")
-        print("title: %s" % hit['title'])
-        print("price: %s" % hit['rent_price'])
-        print("address: %s" % hit['address'])
-        print("available_at: %s" % hit['available_at'])
-        print("dimensions: %s" % hit['dimensions'])
+        print("title: %s" % hit['title'].encode("utf-8"))
         print("url: %s" % hit['url'])
+        print("price: %s" % hit['rent_price'])
+        print("available_at: %s" % hit['available_at'])
+        print("address: %s" % hit['address'])
+
+        if('dimensions' in hit.keys()):
+            print("dimensions: %s" % hit['dimensions'].encode("utf-8"))
 
 if __name__ == '__main__':
     from elasticsearch import Elasticsearch

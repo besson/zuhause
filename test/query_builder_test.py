@@ -13,6 +13,7 @@ class QueryBuilderTest(TestCase):
                                }
                             ],
                             'must_not': [],
+                            'must': [],
                             'filter': []
                           }
                         },
@@ -31,11 +32,17 @@ class QueryBuilderTest(TestCase):
         expected =  "'must_not': [{'match_phrase': {'description.english': 'pet not allowed'}}]"
         self.assertTrue(expected in str(QueryBuilder(params).build()))
 
+        expected =  "'must': [{'match': {'allows_pets': 'yes'}}]"
+        self.assertTrue(expected in str(QueryBuilder(params).build()))
+
     def test_should_add_not_pets_allowed_param(self):
-        params = {'pets_allowed': 'not'}
+        params = {'pets_allowed': 'no'}
 
         expected =  "'must_not': [{'match_phrase': {'description.english': 'pet not allowed'}}"
         self.assertTrue(expected not in str(QueryBuilder(params).build()))
+
+        expected =  "'must': [{'match': {'allows_pets': 'no'}}]"
+        self.assertTrue(expected in str(QueryBuilder(params).build()))
 
     def test_should_add_price_filter(self):
         params = {'max_price': 1200}
