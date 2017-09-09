@@ -8,6 +8,7 @@ from scrapy.spiders import CrawlSpider
 from datetime import date
 from zuhause.utils.date_parser import parse_date
 from zuhause.utils.geo import coord
+from zuhause.utils.geo import address
 import re
 
 class Immobilienscout24Spider(CrawlSpider):
@@ -43,14 +44,21 @@ class Immobilienscout24Spider(CrawlSpider):
 
         attributes = sel.xpath("//div[@class='criteriagroup print-two-columns']")
         home['rooms'] = self.to_float(attributes.xpath("//dl//dd[contains(@class, 'zimmer')]//text()"))
-        home['dimensions'] = self.to_str(attributes.xpath("//dl//dd[contains(@class, 'wohnflaeche')]//text()"))
         home['available_at'] = parse_date(self.to_str(attributes.xpath("//dl//dd[contains(@class, 'bezugsfrei')]//text()")))
-        home['min_time_to_stay'] = self.to_str(attributes.xpath("//dl//dd[contains(@class, 'mindestmietdauer')]//text()"))
         home['rent_price'] = self.format_price(sel.xpath("//div[contains(@class, 'mietemonat')]//text()"))
         home['updated_at'] = date.today().isoformat()
         home['geolocation'] = self.geo(self.to_str(sel.xpath("//div[contains(@class, 'map-container')]//script//text()")))
+        home['address'] = address(home['geolocation'])
 
-        print(home)
+
+        try:
+            home['allows_pets'] = self.format_allows_pets(self.to_str(attributes.xpath("//dl//dd[contains(@class, 'haustiere')]//text()")))
+            home['min_time_to_stay'] = self.to_str(attributes.xpath("//dl//dd[contains(@class, 'mindestmietdauer')]//text()"))
+            home['dimensions'] = self.to_str(attributes.xpath("//dl//dd[contains(@class, 'wohnflaeche')]//text()"))
+        except:
+            pass
+
+        return home
 
     def geo(self, content):
         latitude = re.search(r'.*latitude\":\s+\"(.*)\",', content).group(1)
@@ -59,10 +67,16 @@ class Immobilienscout24Spider(CrawlSpider):
         return "%s,%s" % (latitude, longitude)
 
     def to_float(self, element):
-     return float(element.extract()[0].strip())
+        return float(element.extract()[0].strip())
 
     def to_str(self, element):
-     return str(element.extract()[0].encode("utf-8")).strip()
+        return str(element.extract()[0].encode("utf-8")).strip()
 
     def format_price(self, element):
-     return self.to_str(element).split()[0].replace(",", "").replace(".", "")
+        return self.to_str(element).split()[0].replace(",", "").replace(".", "")
+
+    def format_allows_pets(self, content):
+        if('Nein' in content):
+            return 'no'
+
+        return 'yes'
