@@ -26,3 +26,4 @@ class Home(scrapy.Item):
     updated_at = Field()
     address = Field()
     geolocation = Field()
+    rooms = Field()
