@@ -19,6 +19,7 @@ class Search:
     def query(self, _params):
         es_query = QueryBuilder(_params).build()
         results = es.search(index='zuhause', doc_type='offer', body=es_query)
+        print("total results: %d" % results['hits']['total'])
         [self.print_hit(r['_source']) for r in results['hits']['hits']]
 
     def print_hit(self, hit):

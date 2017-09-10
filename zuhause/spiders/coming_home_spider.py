@@ -49,6 +49,7 @@ class ComingHomeSpider(CrawlSpider):
         home['updated_at'] = date.today().isoformat()
         home['address'] = self.address(response.body)
         home['geolocation'] = coord(home['address'])
+        home['allows_pets'] = self.format_allows_pets(home['description'])
 
         return home
 
@@ -59,3 +60,9 @@ class ComingHomeSpider(CrawlSpider):
             return str(match.group(1))
         else:
             return ''
+
+    def format_allows_pets(self, content):
+        if('pets not allowed' in content):
+            return 'no'
+
+        return 'yes'

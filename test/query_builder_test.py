@@ -7,17 +7,22 @@ class QueryBuilderTest(TestCase):
         params = {}
         expected = str({
                     'query': {
-                        'bool': {
-                            'should': [
-                               {'match_all': {}
-                               }
-                            ],
-                            'must_not': [],
-                            'must': [],
-                            'filter': []
-                          }
-                        },
-                        'size': 1000
+                        'function_score': {
+                            'query': {
+                                'bool': {
+                                    'should': [
+                                       {'match_all': {}
+                                       }
+                                    ],
+                                    'must_not': [],
+                                    'must': [],
+                                    'filter': []
+                                }
+                            },
+                            'score_mode': 'sum'
+                        }
+                    },
+                    'size': 1000
                 })
 
         self.assertEquals(expected, str(QueryBuilder(params).build()))
@@ -27,19 +32,13 @@ class QueryBuilderTest(TestCase):
         self.assertTrue(str({'match': {'all': 'Modern building'}}) in str(QueryBuilder(params).build()))
 
     def test_should_add_pets_allowed_param(self):
-        params = {'pets_allowed': 'yes'}
-
-        expected =  "'must_not': [{'match_phrase': {'description.english': 'pet not allowed'}}]"
-        self.assertTrue(expected in str(QueryBuilder(params).build()))
+        params = {'pets_allowed': True}
 
         expected =  "'must': [{'match': {'allows_pets': 'yes'}}]"
         self.assertTrue(expected in str(QueryBuilder(params).build()))
 
     def test_should_add_not_pets_allowed_param(self):
-        params = {'pets_allowed': 'no'}
-
-        expected =  "'must_not': [{'match_phrase': {'description.english': 'pet not allowed'}}"
-        self.assertTrue(expected not in str(QueryBuilder(params).build()))
+        params = {'pets_allowed': False}
 
         expected =  "'must': [{'match': {'allows_pets': 'no'}}]"
         self.assertTrue(expected in str(QueryBuilder(params).build()))
@@ -52,10 +51,10 @@ class QueryBuilderTest(TestCase):
         params = {'available_at': '2017-01-01'}
         self.assertTrue(str({'range': {'available_at': {'to': '2017-01-01'}}}) in str(QueryBuilder(params).build()))
 
-    def test_should_filter_by_radius(self):
+    def test_should_boost_by_distance(self):
         params = {'base_location': {'lat': 52.5219184, 'long': 13.411026, 'radius': '42km'}}
 
-        expected = "'geo_distance': {'distance': '42km', 'geolocation': {'lat': 52.5219184, 'lon': 13.411026}}"
+        expected = "'gauss': {'geolocation': {'origin': '52.5219184,13.411026', 'scale': '42km'}"
         self.assertTrue(expected in str(QueryBuilder(params).build()))
 
     def test_should_boost_by_rooms(self):
