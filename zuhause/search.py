@@ -22,15 +22,15 @@ class Search:
         [self.print_hit(r['_source']) for r in results['hits']['hits']]
 
     def print_hit(self, hit):
-        print("-------------------------------")
-        print("title: %s" % hit['title'].encode("utf-8"))
-        print("url: %s" % hit['url'])
-        print("price: %s" % hit['rent_price'])
-        print("available_at: %s" % hit['available_at'])
-        print("address: %s" % hit['address'])
+        fields = ['title', 'url', 'available_at', 'address', 'dimensions']
 
-        if('dimensions' in hit.keys()):
-            print("dimensions: %s" % hit['dimensions'].encode("utf-8"))
+        print("-------------------------------")
+
+        for field in fields:
+            if(field in hit.keys() and hit[field] is not None):
+                print("%s: %s" % (field, hit[field].encode("utf-8")))
+
+        print("price: %s" % hit['rent_price'])
 
 if __name__ == '__main__':
     from elasticsearch import Elasticsearch
