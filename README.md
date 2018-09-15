@@ -24,6 +24,7 @@ $ scrapy crawl <spider name>
 ```
 #### Available spiders
 * coming-home
+* immobilien
 
 ## Searching
 
