@@ -52,7 +52,7 @@
                "type": "geo_point"
             },
             "location": {
-               "type": "string",
+               "type": "text",
                "analyzer": "ge_enhanced"
             },
             "description": {
@@ -63,8 +63,7 @@
                      "analyzer": "english"
                   },
                   "keyword": {
-                     "type": "string",
-                     "analyzer": "keyword"
+                     "type": "keyword"
                   },
                   "german": {
                      "type": "text",
@@ -80,8 +79,7 @@
                      "analyzer": "english"
                   },
                   "keyword": {
-                     "type": "string",
-                     "analyzer": "keyword"
+                     "type": "keyword"
                   },
                   "german": {
                      "type": "text",
@@ -97,8 +95,7 @@
                      "analyzer": "english"
                   },
                   "keyword": {
-                     "type": "string",
-                     "analyzer": "keyword"
+                     "type": "keyword"
                   },
                   "german": {
                      "type": "text",

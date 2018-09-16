@@ -3,3 +3,4 @@ elasticsearch
 pytest
 urllib3
 scrapy
+pyyaml

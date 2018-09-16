@@ -12,14 +12,14 @@ from zuhause.utils.geo import address
 import re
 
 class Immobilienscout24Spider(CrawlSpider):
-    name = 'immobilien'
-    start_urls = ['https://www.immobilienscout24.de/Suche/S-T/P-1/WAZ/Umkreissuche/Berlin_2dMitte_20_28Mitte_29/10178/228180/2512256/Alexanderplatz/-/100']
+    name = 'immobilien-groundfloor'
+    start_urls = ['https://www.immobilienscout24.de/Suche/S-T/Wohnung-Miete/Berlin/Berlin/-/-/-/EURO--1100,00/-/117']
 
     def parse(self, response):
         sel = Selector(response)
 
         total_pages = int(sel.xpath("//div[@id='pageSelection']//select//option//text()").extract()[-1])
-        url = "https://www.immobilienscout24.de/Suche/S-T/P-%d/WAZ/Umkreissuche/Berlin_2dMitte_20_28Mitte_29/10178/228180/2512256/Alexanderplatz/-/100"
+        url = 'https://www.immobilienscout24.de/Suche/S-T/P-%d/Wohnung-Miete/Berlin/Berlin/-/-/-/EURO--1100,00/-/117'
 
         for x in range(1, total_pages + 1):
             yield Request(url % x, self.parse_search_results)
@@ -37,15 +37,15 @@ class Immobilienscout24Spider(CrawlSpider):
         home = Home()
 
         home['url'] = response.url
-        home['source'] = 'immobilienscout24'
-        home['furnished'] = True
+        home['source'] = 'immobilienscout24-groundfloor'
+        home['furnished'] = False
         home['title'] = self.to_str(sel.xpath("//h1[@id='expose-title']//text()"))
         home['source_id'] = re.match(r'.*expose/(\d+)', response.url).group(1)
 
-        attributes = sel.xpath("//div[@class='criteriagroup print-two-columns']")
+        attributes = sel.xpath("//div[@class='criteriagroup criteria-group--two-columns']")
         home['rooms'] = self.to_float(attributes.xpath("//dl//dd[contains(@class, 'zimmer')]//text()"))
         home['available_at'] = parse_date(self.to_str(attributes.xpath("//dl//dd[contains(@class, 'bezugsfrei')]//text()")))
-        home['rent_price'] = self.format_price(sel.xpath("//div[contains(@class, 'mietemonat')]//text()"))
+        home['rent_price'] = self.format_price(sel.xpath("//dd[contains(@class, 'gesamtmiete')]//text()"))
         home['updated_at'] = date.today().isoformat()
         home['geolocation'] = self.geo(self.to_str(sel.xpath("//div[@id='half-page-ad-stick-stopper']//script//text()")))
         home['address'] = address(home['geolocation'])
@@ -67,7 +67,7 @@ class Immobilienscout24Spider(CrawlSpider):
         return "%s,%s" % (latitude, longitude)
 
     def to_float(self, element):
-        return float(element.extract()[0].strip())
+        return float(element.extract()[0].strip().replace(",", "."))
 
     def to_str(self, element):
         return str(element.extract()[0].encode("utf-8")).strip()
