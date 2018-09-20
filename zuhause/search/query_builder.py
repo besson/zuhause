@@ -7,7 +7,6 @@ class QueryBuilder:
         es_query = self._query_template()
         function_score = es_query['query']['function_score']
         should_match = es_query['query']['function_score']['query']['bool']['should']
-        must_not_match = es_query['query']['function_score']['query']['bool']['must_not']
         must_match = es_query['query']['function_score']['query']['bool']['must']
         filter_match = es_query['query']['function_score']['query']['bool']['filter']
 
@@ -15,8 +14,11 @@ class QueryBuilder:
         self._add_pet_filter(must_match)
         self._add_max_price_filter(filter_match)
         self._add_available_at_filter(filter_match)
+        self._add_room_filter(filter_match)
+        self._add_elevator_filter(must_match)
+        self._add_groundfloor_filter(must_match)
+        self._add_furnished_filter(must_match)
         self._add_geo_location_boost(function_score)
-        self._add_room_booster(should_match)
 
         return es_query
 
@@ -37,6 +39,22 @@ class QueryBuilder:
     def _add_available_at_filter(self, filter_match):
         if ('available_at' in self._params):
             filter_match.append({'range': {'available_at': {'to': self._params['available_at']}}})
+
+    def _add_room_filter(self, filter_match):
+        if ('rooms' in self._params):
+            filter_match.append({'range': {'rooms': {'from': self._params['rooms']}}})
+
+    def _add_elevator_filter(self, must_match):
+        if ('elevator' in self._params and self._params['elevator'] == True):
+            must_match.append({'match': {'source': 'immobilienscout24-elevator'}})
+
+    def _add_groundfloor_filter(self, must_match):
+        if ('groundfloor' in self._params and self._params['groundfloor'] == True):
+            must_match.append({'match': {'source': 'immobilienscout24-groundfloor'}})
+
+    def _add_furnished_filter(self, must_match):
+        if ('furnished' in self._params and self._params['furnished'] == True):
+            must_match.append({'match': {'furnished': True}})
 
     def _add_geo_location_boost(self, function_score):
         if ('base_location' in self._params):

@@ -9,9 +9,9 @@ class MongoPipeline(object):
 
     def process_item(self, item, spider):
         d_item = dict(item)
-        query = {'source_id': d_item['source_id'], 'source': d_item['source']}
+        query = {'source_id': d_item['source_id']}
 
-        self._home_offers.find_one_and_delete(query)
-        self._home_offers.save(d_item)
+        if not self._home_offers.find_one(query):
+            self._home_offers.save(d_item)
 
         return item
